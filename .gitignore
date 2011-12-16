@@ -4,3 +4,4 @@
 .DS_Store
 .monitor
 node_modules
+/public/stylesheets/*.css
