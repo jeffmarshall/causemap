@@ -1,0 +1,40 @@
+h1 New Situation
+
+form(method="post", action="")
+  ul
+    li
+      input(type="text", name="situation[title]", placeholder="Title")
+    li
+      textarea(name="situation[description]", placeholder="Description")
+    li
+      input(type="text", id="causes", name="causes", placeholder="Causes")
+    li
+      input(type="text", id="effects", name="effects", placeholder="Effects")
+    li
+      input(type="submit")
+
+script(src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js")
+script(src="/javascripts/autoSuggestv14/jquery.autoSuggest.js")
+script
+  $(function(){
+    // $('#causes, #effects').autoSuggest('/suggest/', {
+    //   minChars: 2,
+    //   matchCase: false,
+    //   selectedItemProp: 'title',
+    //   selectedValuesProp: 'id'
+    // });
+    $('#causes').autoSuggest('/suggest/', {
+      asHtmlID: 'causes_list',
+      startText: 'Add a cause',
+      minChars: 2,
+      matchCase: false, 
+      selectedValuesProp: 'id'
+    });
+    $('#effects').autoSuggest('/suggest/', {
+      asHtmlID: 'effects_list',
+      minChars: 2,
+      startText: 'Add an effect',
+      matchCase: false, 
+      selectedValuesProp: 'id'
+    });
+  });

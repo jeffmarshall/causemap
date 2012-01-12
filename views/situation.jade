@@ -1,1 +1,16 @@
-h1 This is the situation: 
+h1= situation.title
+p= situation.description
+
+- if (situation.causes)
+  h2 Causes
+  ul.causes
+    each cause in situation.causes
+      li
+        a(href='/s/'+ cause.cause)= cause.title
+
+- if (situation.effects)
+  h2 Effects
+  ul.effects
+    each effect in situation.effects
+      li
+        a(href='/s/'+ effect.effect)= effect.title

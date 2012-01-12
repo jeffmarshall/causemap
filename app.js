@@ -33,6 +33,9 @@ app.configure('production', function(){
 // Routes
 
 app.get('/', routes.index);
+app.get('/new/', routes.new_situation);
+app.post('/new/', routes.post_new_situation);
+app.all('/suggest/', routes.suggest);
 app.get('/s/:situation_id', routes.situation);
 
 app.listen(3000);
