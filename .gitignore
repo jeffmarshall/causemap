@@ -1,7 +1,0 @@
-*.swp
-*.swo
-*.swn
-.DS_Store
-.monitor
-node_modules
-/public/stylesheets/*.css
