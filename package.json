@@ -1,0 +1,10 @@
+{
+  "name": "causemap",
+  "version": "0.1.0-beta",
+  "description": "A Coffeescript implementation of the Causemap API. Relies on CouchDB.",
+  "dependencies": {
+    "nano": "",
+    "underscore": "",
+    "async": ""
+  }
+}
