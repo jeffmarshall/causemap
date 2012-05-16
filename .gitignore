@@ -13,3 +13,4 @@ results
 
 npm-debug.log
 /local.json
+node_modules
