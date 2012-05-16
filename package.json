@@ -3,8 +3,9 @@
   "version": "0.1.0-beta",
   "description": "A Coffeescript implementation of the Causemap API. Relies on CouchDB.",
   "dependencies": {
-    "nano": "",
-    "underscore": "",
-    "async": ""
+    "nano": "x.x.x",
+    "underscore": "x.x.x",
+    "async": "x.x.x",
+    "coffee-script": "x.x.x"
   }
 }
