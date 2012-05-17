@@ -19,7 +19,7 @@ Create two situations and link them by a cause/effect relationship.
 ```javascript
 var cm = require('./');
 cm.config.set({
-	dbhost: 'http://username:password@example.com:5984',
+  dbhost: 'http://username:password@example.com:5984',
   dbname: 'causemap'
 });
 
