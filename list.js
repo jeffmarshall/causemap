@@ -334,11 +334,11 @@ function causesOfSituation(){
           }
 
           relation.cause = cause;
-          return map_callback(null, relation)
+          return map_callback(null, relation);
         });
       }
 
-      async.map(relations, attachEffect, 
+      async.map(relations, attachCause, 
         function(map_error, relations_with_cause){
           if (map_error){
             return callback(map_error, null);
