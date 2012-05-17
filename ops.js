@@ -33,6 +33,30 @@ function view(){
 }
 
 
+function deleteDoc(doc_id, callback){
+  var callback = callback || function(){};
+
+  var db = initDb();
+
+  db.get(doc_id, function(get_error, doc){
+    if (get_error){
+      return callback(get_error, null);
+    }
+
+    db.destroy(doc._id, doc._rev, function(destroy_error, destroy_result){
+      if (destroy_error){
+        if (destroy_error === 'conflict'){
+          return delete(doc_id, callback);
+        }
+        return callback(destroy_error, null);
+      }
+
+      return callback(null, destroy_result);
+    });
+  });
+}
+
+
 function viewOrInsertDesign(){
   var design_name = arguments[0];
   var view_name = arguments[1];
@@ -113,5 +137,6 @@ module.exports = {
   insert: insert,
   get: get,
   view: viewOrInsertDesign,
+  delete: deleteDoc,
   atomic: atomicOperation
 }
