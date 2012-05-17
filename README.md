@@ -58,9 +58,11 @@ cm.list.causes('8bb64c66c8e46092abb94cccf4053572', console.log)
 
 ## Installation
 
-  $ cd node_modules
-  $ git clone git://github.com/classy/causemap.git
-  $ cd causemap && npm install
+```bash
+$ cd node_modules
+$ git clone git://github.com/classy/causemap.git
+$ cd causemap && npm install
+```
 
 
 # License
