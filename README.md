@@ -42,7 +42,7 @@ cm.create.relation(
 //    change: '8bb64c66c8e46092abb94cccf40563d3' }
 
 // List the causes of 'Polar Icecaps Melting'
-cm.list.causes('8bb64c66c8e46092abb94cccf4053572', console.log)
+cm.list.causes('8bb64c66c8e46092abb94cccf405469a', console.log)
 // => null [ { _id: '8bb64c66c8e46092abb94cccf4055ba6',
 //    _rev: '1-2d8de2ff04ef6c6a4a44882ac6277364',
 //    type: 'relation',
