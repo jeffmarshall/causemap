@@ -11,6 +11,7 @@ module.exports = {
   create: require('./create'),
   modify: require('./modify'),
   list: require('./list'),
+  delete: require('./delete'),
   config: config,
   _ops: require('./ops')
 }

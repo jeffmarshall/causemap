@@ -137,6 +137,6 @@ module.exports = {
   insert: insert,
   get: get,
   view: viewOrInsertDesign,
-  delete: deleteDoc,
+  del: deleteDoc,
   atomic: atomicOperation
 }
