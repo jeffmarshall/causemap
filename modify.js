@@ -207,10 +207,12 @@ function modifyRelationStrength(relation_id, action, callback){
 
   function strengthen(relation){
     relation.strength += 1;
+    return relation;
   }
 
   function weaken(relation){
     relation.strength -= 1;
+    return relation;
   }
 
   var operation;
