@@ -202,6 +202,40 @@ function unmarkDocument(doc_id, mark_name, callback){
 }
 
 
+function modifyRelationStrength(relation_id, action, callback){
+  var callback = callback || function(){};
+
+  function strengthen(relation){
+    relation.strength += 1;
+  }
+
+  function weaken(relation){
+    relation.strength -= 1;
+  }
+
+  var operation;
+
+  switch(action){
+    case 'strengthen' : operation = strengthen; break;
+    case 'weaken' : operation = weaken; break;
+    default : throw {error: 'argument_error', message: 'Invalid action.'};
+  }
+
+  ops.atomic(relation_id, operation, callback);
+}
+
+
+function weakenRelation(relation_id, callback){
+  var callback = callback || function(){};
+
+  function weaken(relation){
+    relation.strength -= 1;
+  }
+
+  ops.atomic(relation_id, weaken, callback);
+}
+
+
 function modifySituationTitle(situation_id, title, callback){
   var callback = callback || function(){};
   modifyField(situation_id, 'title', title, callback);
@@ -255,6 +289,7 @@ module.exports = {
   },
   relation: {
     description: modifyRelationDescription,
+    strength: modifyRelationStrength,
     mark: markDocument,
     unmark: unmarkDocument
   }

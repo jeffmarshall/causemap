@@ -1,6 +1,11 @@
 var ops = require('./ops');
 
 
+// TODO there needs to be some checking done before creating changes or
+// relations, `change.changed` needs to return something that exists. The
+// same goes for `relation.cause and `relation.effect`.
+
+
 
 function createChange(changed, field_name, changed_from, changed_to, callback){
   var callback = callback || function(){};
@@ -67,7 +72,8 @@ function createRelation(cause_id, effect_id, callback){
     },
     effect: {
       _id: effect_id
-    }
+    },
+    strength: 0
   }
 
   ops.insert(relation, function(insert_error, insert_result){
