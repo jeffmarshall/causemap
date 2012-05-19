@@ -1,4 +1,6 @@
 var ops = require('./ops');
+var utils = require('./utils');
+var fetch = require('./fetch');
 
 
 // TODO there needs to be some checking done before creating changes or
@@ -34,28 +36,40 @@ function createSituation(title, callback){
     creation_date: new Date()
   }
 
-  ops.insert(situation, function(insert_error, insert_result){
-    if (insert_error){
-      return callback(insert_error, null);
+  var slugified_title = utils.slugify(title);
+
+  fetch.situation(slugified_title, function(fetch_error){
+    if (fetch_error && fetch_error.error === 'not_found'){
+      situation.slug = slugified_title;
     }
 
-    createChange(
-      {_id: insert_result.id, type: 'situation'},
-      'creation_date',
-      undefined, 
-      situation.creation_date,
-      function(create_change_error, create_change_result){
-        if (create_change_error){
-          return callback(create_change_error, null);
-        }
-
-        return callback(null, {
-          ok: true,
-          id: insert_result.id,
-          change: create_change_result.id
-        });
+    ops.insert(situation, function(insert_error, insert_result){
+      if (insert_error){
+        return callback(insert_error, null);
       }
-    );
+
+      createChange(
+        {_id: insert_result.id, type: 'situation'},
+        'creation_date',
+        undefined, 
+        situation.creation_date,
+        function(create_change_error, create_change_result){
+          if (create_change_error){
+            return callback(create_change_error, null);
+          }
+
+          var creation_result = {
+            ok: true,
+            id: insert_result.id,
+            change: create_change_result.id
+          }
+
+          if (situation.slug) creation_result.slug = situation.slug;
+
+          return callback(null, creation_result);
+        }
+      );
+    });
   });
 }
 
