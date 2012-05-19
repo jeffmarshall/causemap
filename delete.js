@@ -7,6 +7,8 @@ var fetch = require('./fetch');
 
 
 function deleteRelation(relation_id, callback){
+  var callback = callback || function(){};
+
   fetch.relation(relation_id, function(fetch_error, relation){
     if (fetch_error){
       return callback(fetch_error, null);
@@ -50,6 +52,8 @@ function deleteRelation(relation_id, callback){
 
 
 function deleteSituation(situation_id, callback){
+  var callback = callback || function(){};
+
   fetch.situation(situation_id, function(fetch_error, situation){
     if (fetch_error){
       return callback(fetch_error, null);
