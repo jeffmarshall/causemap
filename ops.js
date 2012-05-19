@@ -124,8 +124,8 @@ function atomicOperation(doc_id, operation, callback){
       }
 
       return callback(null, _.extend(altered_doc, {
-        _id: insert_result._id,
-        _rev: insert_result._rev,
+        _id: insert_result.id,
+        _rev: insert_result.rev,
       }));
     });
   });
