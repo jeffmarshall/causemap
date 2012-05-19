@@ -25,7 +25,13 @@ function deleteRelation(relation_id, callback){
       }
 
       function deleteDoc(doc, map_callback){
-        ops.del(doc._id, map_callback);
+        ops.del(doc._id, function(del_error, del_result){
+          if(del_err && del_err.reason !== 'deleted'){
+            return map_callback(del_err, null);
+          }
+
+          return map_callback(null, del_result);
+        });
       }
 
       async.map(changes, deleteDoc, function(map_error, deletion_results){
@@ -97,7 +103,13 @@ function deleteSituation(situation_id, callback){
           return deleteRelation(doc._id, map_callback);
         }
 
-        ops.del(doc._id, map_callback);
+        ops.del(doc._id, function(del_error, del_result){
+          if(del_error && del_error.reason !== 'deleted'){
+            return map_callback(del_error, null);
+          }
+
+          return map_callback(null, del_result);
+        });
       }
 
       // delete the dependent docs
