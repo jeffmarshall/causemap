@@ -56,7 +56,7 @@ function modifySituationTags(situation_id, action, tag, callback){
     old_tags = _.clone(situation.tags);
     var tags = situation.tags;
 
-    if (_.isArray(tags) && tags.indexOf(tag)){
+    if (_.isArray(tags) && tags.indexOf(tag) != -1){
       throw errors.alreadyTagged(tag);
     }
 
