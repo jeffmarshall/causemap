@@ -142,6 +142,5 @@ function deleteSituation(situation_id, callback){
 
 module.exports = {
   situation: deleteSituation
-  // TODO
-  // relation: deleteRelation
+  relation: deleteRelation
 }
