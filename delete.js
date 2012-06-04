@@ -141,6 +141,6 @@ function deleteSituation(situation_id, callback){
 
 
 module.exports = {
-  situation: deleteSituation
+  situation: deleteSituation,
   relation: deleteRelation
 }
