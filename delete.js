@@ -26,7 +26,7 @@ function deleteRelation(relation_id, callback){
 
       function deleteDoc(doc, map_callback){
         ops.del(doc._id, function(del_error, del_result){
-          if(del_err && del_err.reason !== 'deleted'){
+          if(del_error && del_error.reason !== 'deleted'){
             return map_callback(del_err, null);
           }
 

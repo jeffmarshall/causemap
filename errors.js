@@ -1,3 +1,7 @@
+// TODO:
+// - these should all be real errors:
+// http://dustinsenos.com/articles/customErrorsInNode
+
 module.exports = {
   notFound: function(doc_id){
     return {

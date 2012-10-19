@@ -6,8 +6,28 @@ var errors = require('./errors');
 
 
 
+// TODO:
+// - throw errors when the arguments are wrong
 
-function modifyField(doc_id, field_name, value, callback){
+
+function modifyField(args, callback){
+  // Arguments:
+  //
+  // {
+  //   doc_id: <string>,
+  //   field_name: <string>,
+  //   value: <js>,
+  //   reason: <string> (optional),
+  //   generate_change_object: <bool> (optional)
+  // }
+
+  // unpacking args
+  var doc_id = args.doc_id;
+  var field_name = args.field_name;
+  var value = args.value;
+  var reason = args.reason;
+  var generate_change_object = args.generate_change_object || true;
+
   var callback = callback || function(){};
   var old_value = null;
   var doc_type = null
@@ -25,30 +45,64 @@ function modifyField(doc_id, field_name, value, callback){
       return callback(operation_error, null);
     }
 
-    // field successfully modified, creating change.
+    // field successfully modified
 
-    create.change(
-      {_id: doc_id, type: doc_type},
-      field_name,
-      old_value,
-      value,
-      function(create_change_error, create_change_result){
-        if (create_change_error){
-          return callback(create_change_error, null);
+    if (generate_change_object){
+      create.change({
+          changed: {_id: doc_id, type: doc_type},
+          field_name: field_name,
+          changed_from: old_value,
+          changed_to: value,
+          reason: reason
+        },
+        function(create_change_error, create_change_result){
+          if (create_change_error){
+            return callback(create_change_error, null);
+          }
+
+          return callback(null, {
+            ok: true,
+            id: doc_id,
+            change: create_change_result.id
+          });
         }
-
-        return callback(null, {
-          ok: true,
-          id: doc_id,
-          change: create_change_result.id
-        });
-      }
-    );
+      );
+    } else {
+      return callback(null, {
+        ok: true,
+        id: doc_id,
+      });
+    }
   });
 }
 
 
-function modifySituationTags(situation_id, action, tag, callback){
+function modifySituationTags(args, callback){
+  // Args:
+  // {
+  //   situation_id: <string>,
+  //   tag|untag: <string>,
+  //   reason: <string>
+  // }
+
+  // unpack args
+  var situation_id = args.situation_id;
+  
+  if (args.tag){
+    var action = 'add';
+    var tag = arg.tag;
+  } else if (args.untag){
+    var action = 'remove';
+    var tag = arg.untag;
+  } else {
+    return callback({
+      error: "argument_error",
+      message: "arguments must contain either 'tag' or 'untag'"
+    },null);
+  }
+
+  var reason = args.reason;
+
   var callback = callback || function(){};
   var old_tags = null;
 
@@ -90,6 +144,7 @@ function modifySituationTags(situation_id, action, tag, callback){
     return situation;
   }
 
+  // TODO: the duties of this block can be handled earlier
   switch(action){
     case 'add': var operation = addTag; break;
     case 'remove': var operation = removeTag; break;
@@ -100,11 +155,13 @@ function modifySituationTags(situation_id, action, tag, callback){
       return callback(operation_error, null);
     }
 
-    create.change(
-      {_id: situation_id, type: 'situation'},
-      'tags',
-      old_tags,
-      situation.tags,
+    create.change({
+        changed: {_id: situation_id, type: 'situation'},
+        field_name: 'tags',
+        changed_from: old_tags,
+        changed_to: situation.tags,
+        reason: reason
+      },
       function(create_change_error, create_change_result){
         if (create_change_error){
           return callback(create_change_error, null);
@@ -121,7 +178,33 @@ function modifySituationTags(situation_id, action, tag, callback){
 }
 
 
-function modifyDocumentMark(doc_id, action, mark_name, callback){
+function modifyDocumentMark(args, callback){
+  // Args:
+  //
+  // {
+  //   doc_id: <string>,
+  //   mark|unmark: <string>,
+  //   reason: <string> (optional)
+  // }
+
+  // unpacking args
+  var doc_id = args.doc_id || args.situation_id || args.relation_id;
+
+  if (args.mark){
+    var action = 'mark';
+    var mark_name = args.mark;
+  } else if (args.unmark){
+    var action = 'unmark';
+    var mark_name = args.unmark;
+  } else {
+    return callback({
+      error: "ArgumentError",
+      message: "Argument object must contain either 'mark' or 'unmark' keys"
+    }, null);
+  }
+
+  var reason = args.reason;
+
   var callback = callback || function(){};
   var old_marks = null;
 
@@ -157,6 +240,7 @@ function modifyDocumentMark(doc_id, action, mark_name, callback){
     return doc
   }
 
+  // TODO: the duties of this block should be handled earlier
   switch(action){
     case 'mark': var operation = mark; break;
     case 'unmark': var operation = unmark; break;
@@ -167,11 +251,13 @@ function modifyDocumentMark(doc_id, action, mark_name, callback){
       return callback(operation_error, null);
     }
 
-    create.change(
-      {_id: doc_id, type: marked_doc.type},
-      'marked',
-      old_marks,
-      marked_doc.marked,
+    create.change({
+        changed: {_id: doc_id, type: marked_doc.type},
+        field_name: 'marked',
+        changed_from: old_marks,
+        changed_to: marked_doc.marked,
+        reason: reason
+      },
       function(create_change_error, create_change_result){
         if (create_change_error){
           return callback(create_change_error, null);
@@ -188,21 +274,26 @@ function modifyDocumentMark(doc_id, action, mark_name, callback){
 }
 
 
-function markDocument(doc_id, mark_name, callback){
-  var callback = callback || function(){};
+function modifyRelationStrength(args, callback){
+  // Args:
+  //
+  // {
+  //   strengthen|weaken: <string> (relation_id)
+  // }
+  
+  if (args.strengthen){
+    var relation_id = args.strengthen;
+    var action = 'strengthen';
+  } else if (args.weaken){
+    var relation_id = args.weaken;
+    var action = 'weaken';
+  } else {
+    return callback({
+      error: "ArgumentError",
+      message: "Args must contain either 'strengthen' or 'weaken'"
+    }, null);
+  }
 
-  modifyDocumentMark(doc_id, 'mark', mark_name, callback);
-}
-
-
-function unmarkDocument(doc_id, mark_name, callback){
-  var callback = callback || function(){};
-
-  modifyDocumentMark(doc_id, 'unmark', mark_name, callback);
-}
-
-
-function modifyRelationStrength(relation_id, action, callback){
   var callback = callback || function(){};
 
   function strengthen(relation){
@@ -223,56 +314,139 @@ function modifyRelationStrength(relation_id, action, callback){
     default : throw {error: 'argument_error', message: 'Invalid action.'};
   }
 
-  ops.atomic(relation_id, operation, callback);
+  ops.atomic(relation_id, operation, function(atomic_err, atomic_result){
+    if (atomic_err){
+      return callback(atomic_err, null);
+    }
+
+    return callback(null, {
+      ok: true,
+      id: doc_id, 
+    });
+  });
 }
 
 
-function weakenRelation(relation_id, callback){
+function modifySituationTitle(args, callback){
+  // Args:
+  //
+  // {
+  //   situation_id: <string>,
+  //   title: <string>,
+  //   reason: <string> (optional)
+  // }
+
   var callback = callback || function(){};
 
-  function weaken(relation){
-    relation.strength -= 1;
-  }
-
-  ops.atomic(relation_id, weaken, callback);
+  modifyField({
+    doc_id: args.situation_id,
+    field_name: 'title',
+    value: args.title,
+    reason: args.reason
+  }, callback);
 }
 
+function modifySituationDescription(args, callback){
+  // Args:
+  //
+  // {
+  //   situation_id: <string>,
+  //   description: <string>,
+  //   reason: <string> (optional)
+  // }
 
-function modifySituationTitle(situation_id, title, callback){
   var callback = callback || function(){};
-  modifyField(situation_id, 'title', title, callback);
+
+  modifyField({
+    doc_id: args.situation_id,
+    field_name: 'description',
+    value: args.description,
+    reason: args.reason
+  }, callback);
 }
 
-function modifySituationDescription(situation_id, description, callback){
+function modifySituationLocation(args, callback){
+  // Args:
+  //
+  // {
+  //   situation_id: <string>,
+  //   location: <string>,
+  //   reason: <string> (optional)
+  // }
+
   var callback = callback || function(){};
-  modifyField(situation_id, 'description', description, callback);
+
+  modifyField({
+    doc_id: args.situation_id,
+    field_name: 'location',
+    value: args.location,
+    reason: args.reason
+  }, callback);
 }
 
-function modifySituationLocation(situation_id, location, callback){
+function modifySituationPeriod(args, callback){
+  // Args:
+  //
+  // {
+  //   situation_id: <string>,
+  //   period: <string>,
+  //   reason: <string> (optional)
+  // }
+
   var callback = callback || function(){};
-  modifyField(situation_id, 'location', location, callback);
+
+  modifyField({
+    doc_id: args.situation_id,
+    field_name: 'period',
+    value: args.period,
+    reason: args.reason
+  }, callback);
 }
 
-function modifySituationPeriod(situation_id, period, callback){
-  var callback = callback || function(){};
-  modifyField(situation_id, 'period', period, callback);
-}
+function modifySituationSlug(args, callback){
+  // Args:
+  //
+  // {
+  //   situation_id: <string>,
+  //   slug: <string>,
+  //   reason: <string> (optional)
+  // }
 
-function modifySituationSlug(situation_id, slug, callback){
+  var slug = args.slug;
+
   var callback = callback || function(){};
 
   fetch.situation(slug, function(fetch_error, situation){
     if (fetch_error || situation.moved){
-      return modifyField(situation_id, 'slug', slug, callback);
+      return modifyField({
+        doc_id: args.situation_id,
+        field_name: 'slug',
+        value: args.slug,
+        reason: args.reason
+      }, callback);
     }
 
     callback(errors.slugInUse(slug), null);
   });
 }
 
-function modifyRelationDescription(relation_id, description, callback){
+function modifyRelationDescription(args, callback){
+  // Args:
+  //
+  // {
+  //   relation_id: <string>,
+  //   description: <string>,
+  //   reason: <string> (optional)
+  // }
+
   var callback = callback || function(){};
-  modifyField(relation_id, 'description', description, callback);
+
+  modifyField({
+    doc_id: args.relation_id,
+    field_name: 'description',
+    value: args.description,
+    reason: args.reason
+  }, callback);
 }
 
 
@@ -286,13 +460,11 @@ module.exports = {
     location: modifySituationLocation,
     period: modifySituationPeriod,
     tags: modifySituationTags,
-    mark: markDocument,
-    unmark: unmarkDocument
+    mark: modifyDocumentMark
   },
   relation: {
     description: modifyRelationDescription,
     strength: modifyRelationStrength,
-    mark: markDocument,
-    unmark: unmarkDocument
+    mark: modifyDocumentMark
   }
 }

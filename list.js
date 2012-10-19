@@ -14,6 +14,10 @@ function earliestChanges(){
 
   var view_options = _.extend(default_view_options, options);
 
+  if (view_options.limit < 1){
+    delete view_options.limit;
+  }
+
   ops.view('changes', 'by_creation_date', view_options, 
     function(view_error, changes){
       if (view_error){
@@ -59,6 +63,10 @@ function earliestRelations(){
   }
 
   var view_options = _.extend(default_view_options, options);
+
+  if (view_options.limit < 1){
+    delete view_options.limit;
+  }
 
   ops.view('relations', 'by_creation_date', view_options, 
     function(view_error, relations){
@@ -129,6 +137,10 @@ function earliestSituations(){
 
   var view_options = _.extend(default_view_options, options);
 
+  if (view_options.limit < 1){
+    delete view_options.limit;
+  }
+
   ops.view('situations', 'by_creation_date', view_options, 
     function(view_error, situations){
       if (view_error){
@@ -153,6 +165,10 @@ function latestChanges(){
 
   var view_options = _.extend(default_view_options, options);
 
+  if (view_options.limit < 1){
+    delete view_options.limit;
+  }
+
   earliestChanges(view_options, callback);
 }
 
@@ -169,6 +185,10 @@ function latestRelations(){
 
   var view_options = _.extend(default_view_options, options);
 
+  if (view_options.limit < 1){
+    delete view_options.limit;
+  }
+
   earliestRelations(view_options, callback);
 }
 
@@ -184,6 +204,10 @@ function latestSituations(){
   }
 
   var view_options = _.extend(default_view_options, options);
+
+  if (view_options.limit < 1){
+    delete view_options.limit;
+  }
 
   earliestSituations(view_options, callback);
 }
@@ -240,6 +264,10 @@ function changesToDocument(){
 
   var view_options = _.extend(default_view_options, options);
 
+  if (view_options.limit < 1){
+    delete view_options.limit;
+  }
+
   ops.view('changes', 'by_changed', view_options, 
     function(view_error, changes){
       if(view_error){
@@ -266,6 +294,10 @@ function effectsOfSituation(){
   }
 
   var view_options = _.extend(default_view_options, options);
+
+  if (view_options.limit < 1){
+    delete view_options.limit;
+  }
 
   ops.view('relations', 'by_cause_and_effect', view_options, 
     function(view_error, relations){
@@ -316,6 +348,10 @@ function causesOfSituation(){
   }
 
   var view_options = _.extend(default_view_options, options);
+
+  if (view_options.limit < 1){
+    delete view_options.limit;
+  }
 
   ops.view('relations', 'by_cause_and_effect', view_options, 
     function(view_error, relations){

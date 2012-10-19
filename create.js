@@ -9,25 +9,44 @@ var fetch = require('./fetch');
 
 
 
-function createChange(changed, field_name, changed_from, changed_to, callback){
+function createChange(properties, callback){
+  // Properties:
+  //
+  // {
+  //   changed: {_id: ..., type: ...},
+  //   field_name: <string>,
+  //   changed_from: <old field value>,
+  //   changed_to: <new field value>,
+  //   reason: <reason for making the change> (optional)
+  // }
+
   var callback = callback || function(){};
   var change = {
     type: 'change',
     creation_date: new Date(),
     changed: {
-      _id: changed._id,
-      type: changed.type
+      _id: properties.changed._id,
+      type: properties.changed.type
     },
-    field: field_name,
-    forward: changed_to,
-    backward: changed_from
+    field: properties.field_name,
+    forward: properties.changed_to,
+    backward: properties.changed_from,
   }
+
+  if (properties.reason) change.reason = properties.reason;
 
   ops.insert(change, callback);
 }
 
 
-function createSituation(title, callback){
+function createSituation(properties, callback){
+  // Properties:
+  //
+  // {
+  //   title: <string>
+  // }
+
+  var title = properties.title;
   var callback = callback || function(){};
 
   var situation = {
@@ -48,11 +67,12 @@ function createSituation(title, callback){
         return callback(insert_error, null);
       }
 
-      createChange(
-        {_id: insert_result.id, type: 'situation'},
-        'creation_date',
-        undefined, 
-        situation.creation_date,
+      createChange({
+          changed: {_id: insert_result.id, type: 'situation'},
+          field_name: 'creation_date',
+          changed_from: undefined, 
+          changed_to: situation.creation_date
+        },
         function(create_change_error, create_change_result){
           if (create_change_error){
             return callback(create_change_error, null);
@@ -75,7 +95,17 @@ function createSituation(title, callback){
 
 
 
-function createRelation(cause_id, effect_id, callback){
+function createRelation(properties, callback){
+  // Properties
+  //
+  // {
+  //   cause_id: <string> (situation id),
+  //   effect_id: <string> (situation id)
+  // }
+
+  var cause_id = properties.cause;
+  var effect_id = properties.effect;
+
   var callback = callback || function(){};
   
   var relation = {
@@ -95,11 +125,12 @@ function createRelation(cause_id, effect_id, callback){
       return callback(insert_error);
     }
 
-    createChange(
-      {_id: insert_result.id, type: 'relation'},
-      'creation_date',
-      undefined,
-      relation.creation_date,
+    createChange({
+        changed: {_id: insert_result.id, type: 'relation'},
+        field_name: 'creation_date',
+        changed_from: undefined,
+        changed_to: relation.creation_date
+      },
       function(create_change_error, create_change_result){
         if (create_change_error){
           return callback(create_change_error, null);
