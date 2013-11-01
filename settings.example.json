@@ -1,0 +1,16 @@
+{
+  "couchdb": {
+    "host": "http://localhost:5984",
+    "database": "causemap"
+  },
+  "elasticsearch": {
+    "host": "localhost",
+    "options": {
+      "port": 9200
+    },
+    "indexes": {
+      "main": "causemap",
+      "suggestion": "causemap_suggestions"
+    }
+  }
+}
