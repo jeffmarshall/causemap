@@ -20,6 +20,7 @@ module.exports = (function(){
       if (key === undefined){
         return _.clone(configs);
       }
+
       return configs[key];
     }
   }
