@@ -55,12 +55,12 @@ module.exports = function updateOperationsForChange(
         ) > -1
       ){
         var situation = new Situation(changed.doc._id);
-        situation.relationships(function(search_error, search_result){
-          if (search_error){ return callback(search_error, null) }
+        situation.relationships(function(relationships_error, relationships){
+          if (relationships_error){ return callback(relationships_error, null) }
 
-          parallel_ops = search_result.hits.map(function(hit){
+          parallel_ops = relationships.map(function(relationship_doc){
             return function(parallel_callback){
-              updateOperationsForRelationship(hit._source, function(
+              updateOperationsForRelationship(relationship_doc, function(
                 ops_error,
                 relationship_ops
               ){
