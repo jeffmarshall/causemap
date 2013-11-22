@@ -78,11 +78,13 @@ feed.on('change', function(change){
 });
 
 
-es_cartography_settings.get(
-  'last_update_seq', 
-  function(settings_error, last_update_seq){
-    feed.since = last_update_seq || 0;
-    console.log('last_update_seq:', feed.since);
-    feed.follow();
-  }
-);
+module.exports = function syncChanges(){
+  es_cartography_settings.get(
+    'last_update_seq', 
+    function(settings_error, last_update_seq){
+      feed.since = last_update_seq || 0;
+      console.log('last_update_seq:', feed.since);
+      feed.follow();
+    }
+  );
+}
