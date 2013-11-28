@@ -10,7 +10,7 @@
     "lodash": "~2.2.1",
     "nano": "~4.1.4",
     "cartography": "git://github.com/classy/cartography.git#1773a28d9dcbc02cbd395f453d32f23b6fe05ed8",
-    "auth": "git://github.com/classy/auth.git#01c187e17a92c1787aff6d5f095327cb77343db5"
+    "auth": "git://github.com/classy/auth.git#2d1d8e039c5e862875f8220d8831be2a57cd91c4"
   },
   "devDependencies": {},
   "scripts": {
