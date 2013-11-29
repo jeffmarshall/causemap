@@ -11,5 +11,6 @@ auth.config.set('couchdb', config.get('couchdb'));
 module.exports = {
   models: require('./models'),
   search: require('./search'),
-  config: config
+  config: config,
+  install: require('./install')
 }
