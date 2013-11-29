@@ -12,7 +12,7 @@ var es_configs = config.get('elasticsearch');
 var index_names = [];
 
 for (index_name in es_configs.indexes){
-  index_names.push(es_configs.indexes[index_name])
+  index_names.push(index_name)
 }
 
 
