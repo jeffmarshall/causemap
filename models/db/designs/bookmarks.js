@@ -2,7 +2,7 @@ var toJSON = JSON.stringify;
 
 
 module.exports = {
-  _id: '_design/cm_bookmarks',
+  _id: '_design/bookmarks',
   language: 'javascript',
   validate_doc_update: function(new_doc, old_doc, user_context){
 
