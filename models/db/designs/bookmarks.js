@@ -49,6 +49,19 @@ module.exports = {
         '`bookmarked.type` must be either `situation` or `relationship`.'
       );
     }
+  },
+
+  views: {
+    by_bookmarked: {
+      map: function(doc){
+        emit([doc.changed._id, doc.changed.type, doc.creation_date], null);
+      },
+
+      reduce: function(keys, values, rereduce){
+        if (rereduce) return sum(values);
+        return values.length;
+      }
+    }
   }
 }
 
