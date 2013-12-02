@@ -12,3 +12,4 @@ module.exports = _.extend(
 module.exports.Bookmark = require('./bookmark');
 module.exports.User = require('./user');
 module.exports.Relationship = require('./relationship');
+module.exports.Situation = require('./situation');
