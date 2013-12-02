@@ -67,6 +67,21 @@ module.exports = {
         if (rereduce) return sum(values);
         return values.length;
       }
+    },
+    by_user: {
+      map: function(doc){
+        if (doc.type == 'bookmark'){
+          emit([
+            doc.user._id,
+            doc.bookmarked.type,
+            doc.creation_date
+          ], null)
+        }
+      },
+      reduce: function(keys, values, rereduce){
+        if (rereduce) return sum(values);
+        return values.length;
+      }
     }
   }
 }
