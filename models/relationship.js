@@ -74,6 +74,28 @@ Relationship.prototype.adjustments = function adjustmentsForRelationship(
 
 
 
+Relationship.prototype.strength = function getRelationshipStrength(callback){
+  var self = this;
+
+  var view_options = {
+    startkey: [ self.id, 'strength' ],
+    endkey: [ self.id, 'strength', {} ]
+  }
+
+  db().view(
+    'adjustments',
+    'by_adjusted_field',
+    view_options,
+    function(error, view_result){
+      if (error) return callback(error, null);
+      if (!view_result.rows.length) return callback(null, 0);
+      return callback(null, view_result.rows[0].value)
+    }
+  );
+}
+
+
+
 Relationship.prototype.delete = function deleteRelationship(callback){
   var self = this;
 

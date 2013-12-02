@@ -89,6 +89,66 @@ User.prototype.bookmarks = function bookmarksByUser(
 
 
 
+function adjustRelationshipStrength(
+  user_id, 
+  relationship_id, 
+  amount, 
+  callback
+){
+  var adjustment = new Adjustment([
+    user_id,
+    'adjusted',
+    relationship_id,
+    'strength'
+  ].join(':'));
+
+  adjustment.exists(function(error, doc){
+    if (error){
+      if (error.status_code == 404) {
+        return adjustment.create({
+          user: { _id: user_id },
+          adjusted: {
+            doc: {
+              _id: relationship_id,
+              type: 'relationship'
+            },
+            field: {
+              name: 'strength',
+              by: amount
+            }
+          }
+        }, callback)
+      }
+
+      return callback(error, null);
+    }
+
+    return adjustment.update(function(adjustment_doc){
+      if (adjustment_doc.adjusted.field.by == amount){
+        throw {
+          error: 'already_adjusted', 
+          message: "This adjustment has already been made."
+        }
+      }
+
+      adjustment_doc.adjusted.field.by = amount;
+
+      return adjustment_doc;
+    }, callback);
+  })
+};
+
+
+User.prototype.strengthen = function(relationship, callback){
+  return adjustRelationshipStrength(this.id, relationship.id, 1, callback);
+};
+
+
+User.prototype.weaken = function(relationship, callback){
+  return adjustRelationshipStrength(this.id, relationship.id, -1, callback);
+};
+
+
 User.prototype.adjustments = function userAdjustments(callback){
   var self = this;
 
