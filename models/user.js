@@ -60,7 +60,7 @@ User.prototype.unbookmark = function deleteBookmarkForUser(
 
 
 
-User.prototype.bookmarks = function totalBookmarksForUser(
+User.prototype.bookmarks = function bookmarksByUser(
   callback
 ){
   var self = this;
