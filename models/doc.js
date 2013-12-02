@@ -93,7 +93,11 @@ Doc.prototype.update = function updateDoc(operation, callback){
       return callback(read_error, null);
     }
 
-    var updated_doc_body = operation(doc_body);
+    try {
+      var updated_doc_body = operation(doc_body);
+    } catch (operation_error){
+      return callback(operation_error, null);
+    }
 
     if (!updated_doc_body._id){
       var error = { 
