@@ -1,3 +1,4 @@
+var util = require('util');
 var cartography = require('cartography');
 var Bookmark = require('./bookmark');
 
@@ -13,7 +14,7 @@ var User = function User(id){
 
 
 
-User.prototype = new cartography.models.User();
+util.inherits(User, cartography.models.User);
 
 
 
