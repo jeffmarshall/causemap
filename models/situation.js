@@ -50,39 +50,18 @@ Situation.prototype.bookmarks = function totalBookmarksForSituation(
 Situation.prototype.delete = function deleteSituation(callback){
   var self = this;
 
-  view_options = {
-    startkey: [self.id],
-    endkey: [self.id, {}],
-    include_docs: true,
-    reduce: false
-  }
+  // delete bookmarks
+  self.bookmarks(function(error, result){
+    if (error) return callback(error, null);
 
-  db().view(
-    'bookmarks',
-    'by_bookmarked',
-    view_options,
-    function(view_error, view_result){
-      if (view_error) return callback(view_error, null);
-
-      var docs = view_result.rows.map(function(row){
-        var doc = _.clone(row.doc);
-        doc._deleted = true;
-        return doc;
-      });
-
-      db().bulk({ docs: docs }, function(bulk_error, bulk_delete){
-        if (bulk_error){ return callback(bulk_error, null) }
-
-        docs.map(function(doc_body){
-          var bookmark = new Bookmark(doc_body._id);
-          bookmark.emit('delete');
-        });
-
-        Situation.super_.prototype.delete.call(self, callback);
-      });
-
-    }
-  )
+    db().bulk({ docs: result.map(function(doc){
+      doc._deleted = true;
+      return doc;
+    }) }, function(bulk_error, bulk_delete){
+      if (bulk_error) return callback(bulk_error, null);
+      Situation.super_.prototype.delete.call(self, callback);
+    })
+  })
 }
 
 
