@@ -6,10 +6,12 @@ var auth = require('auth');
 
 module.exports = _.extend(
   cartography.models,
-  auth.models
+  auth.models,
+  {
+    Bookmark: require('./bookmark'),
+    User: require('./user'),
+    Relationship: require('./relationship'),
+    Situation: require('./situation')
+  }
 );
 
-module.exports.Bookmark = require('./bookmark');
-module.exports.User = require('./user');
-module.exports.Relationship = require('./relationship');
-module.exports.Situation = require('./situation');
