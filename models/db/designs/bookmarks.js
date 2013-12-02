@@ -54,7 +54,13 @@ module.exports = {
   views: {
     by_bookmarked: {
       map: function(doc){
-        emit([doc.changed._id, doc.changed.type, doc.creation_date], null);
+        if (doc.type == 'bookmark'){
+          emit([
+            doc.bookmarked._id, 
+            doc.bookmarked.type, 
+            doc.creation_date
+          ], null);
+        }
       },
 
       reduce: function(keys, values, rereduce){
