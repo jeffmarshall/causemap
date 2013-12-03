@@ -14,5 +14,8 @@
     }
   },
   // Determines how quickly popularity scores will deteriorate.
-  "popularity_gravity": 1.8
+  "popularity_gravity": 1.8,
+
+  // Determines how quickly controversiality scores will deteriorate.
+  "controversiality_gravity": 1.8
 }

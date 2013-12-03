@@ -22,6 +22,76 @@ util.inherits(Situation, cartography.models.Situation);
 
 
 
+Situation.prototype.controversiality = function scoreSituationControversiality(
+  callback
+){
+  var self = this;
+  var creation_date;
+  var total_changes = 0;
+
+  async.parallel([
+    function(parallel_callback){
+      var doc = new Doc(self.id);
+      doc.read(function(read_error, doc_body){
+        if (read_error) return parallel_callback(read_error, null);
+        creation_date = new Date(doc_body.creation_date);
+        return parallel_callback(null, { read: true });
+      });
+    },
+
+    function(parallel_callback){
+      var view_options = {
+        startkey: [ self.id ],
+        endkey: [ self.id, {} ]
+      }
+
+      db().view(
+        'cm-changes',
+        'by_changed',
+        view_options,
+        function(view_error, view_results){
+          if (view_error) return parallel_error(view_error, null);
+          if (view_results.rows.length){
+            total_changes = view_results.rows[0].value;
+          }
+
+          return parallel_callback(null, { read_changes: true });
+        }
+      );
+    }
+  ], function(parallel_error, parallel_result){
+    if (parallel_error) return callback(parallel_error, null);
+
+    /*
+     * This rating is calculated the same way as the popularity rating below.
+     * Both use the calculation used by Hacker News.
+     */
+
+    var now = new Date();
+    var diff_in_ms = now - creation_date;
+    var hours_since_creation = Math.floor(diff_in_ms /1000 /60 /60 );
+    var controversiality_gravity = config.get(
+      'controversiality_gravity'
+    ) || 1.8;
+
+    var base_controversiality = total_changes;
+    var rate_of_decay = Math.pow(
+      hours_since_creation +2,
+      controversiality_gravity
+    );
+
+    var controversiality = base_controversiality / rate_of_decay;
+
+    return callback(null, controversiality);
+  });
+}
+
+
+
+
+
+
+
 Situation.prototype.bookmarks = function totalBookmarksForSituation(
   callback
 ){
