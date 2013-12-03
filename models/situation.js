@@ -3,6 +3,7 @@ var _ = require('lodash');
 var async = require('async');
 var cartography = require('cartography');
 var config = require('../config');
+var Doc = require('./doc');
 var Bookmark = require('./bookmark');
 
 var db = require('./db').db;
@@ -55,7 +56,9 @@ Situation.prototype.popularity = function scoreSituationPopularity(callback){
 
   async.parallel([
     function(parallel_callback){
-      self.read(function(read_error, doc){
+      var doc = new Doc(self.id);
+
+      doc.read(function(read_error, doc){
         if (read_error) return parallel_callback(read_error, null);
         creation_date = new Date(doc.creation_date);
         return parallel_callback(null, { read: true });
