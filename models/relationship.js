@@ -96,6 +96,35 @@ Relationship.prototype.strength = function getRelationshipStrength(callback){
 
 
 
+Relationship.prototype.summarize = function summarizeRelationship(callback){
+  var self = this;
+
+  async.parallel([
+    function(parallel_callback){
+      Relationship.super_.prototype.summarize.call(self, parallel_callback);
+    },
+
+    function(parallel_callback){
+      self.strength(function(error, strength_rating){
+        if (error) return parallel_callback(error, null);
+        return parallel_callback(null, { strength: strength_rating });
+      });
+    }
+  ], function(parallel_error, parallel_results){
+    if (parallel_error) return callback(parallel_error, null);
+
+    var summary = {};
+
+    parallel_results.forEach(function(parallel_result){
+      summary = _.extend(summary, parallel_result);
+    });
+
+    return callback(null, summary);
+  });
+}
+
+
+
 Relationship.prototype.delete = function deleteRelationship(callback){
   var self = this;
 
