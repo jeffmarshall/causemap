@@ -1,4 +1,5 @@
 module.exports = {
   bookmarks: require('./bookmarks'),
-  adjustments: require('./adjustments')
+  adjustments: require('./adjustments'),
+  changes: require('./changes')
 }

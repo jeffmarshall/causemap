@@ -52,6 +52,7 @@ Situation.prototype.bookmarks = function totalBookmarksForSituation(
 Situation.prototype.popularity = function scoreSituationPopularity(callback){
   var self = this;
   var creation_date;
+  var total_changes = 0;
   var total_bookmarks = 0;
 
   async.parallel([
@@ -85,6 +86,27 @@ Situation.prototype.popularity = function scoreSituationPopularity(callback){
           return parallel_callback(null, { read_bookmarks: true });
         }
       );
+    },
+
+    function(parallel_callback){
+      var view_options = {
+        startkey: [ self.id ],
+        endkey: [ self.id, {} ]
+      }
+
+      db().view(
+        'cm-changes', 
+        'by_changed', 
+        view_options, 
+        function(view_error, view_results){
+          if (view_error) return parallel_callback(view_error, null);
+          if (view_results.rows.length){
+            total_changes = view_results.rows[0].value;
+          }
+
+          return parallel_callback(null, { read_changes: true });
+        }
+      );
     }
   ], function(parallel_error, parallel_result){
     /* 
@@ -103,7 +125,7 @@ Situation.prototype.popularity = function scoreSituationPopularity(callback){
     var diff_in_ms = now - creation_date;
     var hours_since_creation = Math.floor(diff_in_ms /1000 /60 /60 );
     var popularity_gravity = config.get('popularity_gravity') || 1.8;
-    var base_popularity = total_bookmarks +1;
+    var base_popularity = (total_changes *0.6) + total_bookmarks +1;
     var rate_of_decay = Math.pow(
       hours_since_creation +2,
       popularity_gravity
