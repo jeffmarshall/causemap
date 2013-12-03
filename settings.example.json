@@ -12,5 +12,7 @@
       "main": "causemap",
       "suggestion": "causemap_suggestions"
     }
-  }
+  },
+  // Determines how quickly popularity scores will deteriorate.
+  "popularity_gravity": 1.8
 }
