@@ -6,9 +6,10 @@ var es = require('./client');
 
 
 
-var db_settings = config.get('couchdb');
-var db_uri = [db_settings.host, '/', db_settings.database].join('');
-var es_cartography_settings = settings('cartography');
+var db_configs = config.get('couchdb');
+var es_configs = config.get('elasticsearch');
+var db_uri = [db_configs.host, '/', db_configs.database].join('');
+var index_settings = settings(es_configs.indexes.main);
 
 var feed = new follow.Feed({
   db: db_uri,
@@ -46,7 +47,7 @@ feed.on('change', function(change){
   }
 
   function updateLastUpdateSettingAndContinue(){
-    es_cartography_settings.set(
+    index_settings.set(
       'last_update_seq', 
       change.seq, 
       function(settings_error){
@@ -79,7 +80,7 @@ feed.on('change', function(change){
 
 
 module.exports = function syncChanges(){
-  es_cartography_settings.get(
+  index_settings.get(
     'last_update_seq', 
     function(settings_error, last_update_seq){
       feed.since = last_update_seq || 0;
