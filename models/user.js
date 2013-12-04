@@ -149,6 +149,20 @@ User.prototype.weaken = function(relationship, callback){
 };
 
 
+User.prototype.unstrength = function(relationship, callback){
+  var self = this;
+
+  var adjustment = new Adjustment([
+    self.id,
+    'adjusted',
+    relationship.id,
+    'strength'
+  ].join(':'));
+
+  return adjustment.delete(callback);
+}
+
+
 User.prototype.adjustments = function userAdjustments(callback){
   var self = this;
 
