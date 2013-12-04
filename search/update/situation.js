@@ -28,17 +28,6 @@ module.exports = function updateOperationsForSituation(
         return parallel_callback(null, doc_body);
       });
     },
-
-    function(parallel_callback){
-      situation.summarize(function(summarization_error, situation_summary){
-        if (summarization_error){
-          return parallel_callback(summarization_error, null)
-        }
-
-        summary = situation_summary;
-        return parallel_callback(null, summary);
-      });
-    },
     
     function(parallel_callback){
       situation.popularity(function(popularity_error, popularity_rating){
@@ -65,27 +54,37 @@ module.exports = function updateOperationsForSituation(
   ], function(parallel_error, parallel_result){
     if (parallel_error){ return callback(parallel_error, null) }
 
-    [body, summary].forEach(function(doc){
-      delete doc._rev;
-      delete doc.immutable;
-      delete doc.revisable;
-      doc.popularity = popularity;
-      doc.controversiality = controversiality;
-    });
+    delete body._rev;
+    delete body.immutable;
+    delete body.revisable;
+    body.popularity = popularity;
+    body.controversiality = controversiality;
 
-    return callback(null, [
-      {index: {
-        index: main_index_name,
-        type: doc.type,
-        id: doc._id,
-        data: body
-      }},
-      {index: {
-        index: suggestion_index_name,
-        type: doc.type,
-        id: doc._id,
-        data: summary
-      }}
-    ]);
+    summary = _.clone(body);
+    delete summary.description;
+
+    var update_ops = [
+      {
+        index: {
+          index: main_index_name,
+          type: doc.type,
+          id: doc._id,
+          data: body
+        }
+      }
+    ]
+
+    if (summary.title){
+      update_ops.push({
+        index: {
+          index: suggestion_index_name,
+          type: doc.type,
+          id: doc._id,
+          data: summary
+        }
+      });
+    }
+
+    return callback(null, update_ops);
   });
 }
