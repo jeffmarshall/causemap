@@ -9,20 +9,17 @@ var es_configs = config.get('elasticsearch');
 
 
 
-var index_names = [];
-
-for (index_name in es_configs.indexes){
-  index_names.push(index_name)
-}
+var indexes = es_configs.indexes;
 
 
 function installIndexes(callback){
   async.map(
-    index_names, 
-    function(index_name, async_callback){
+    Object.keys(indexes), 
+    function(index, async_callback){
+      var index_name = indexes[index];
       var index_definition_path = path.join(
         __dirname,
-        index_name + '.json'
+        index + '.json'
       );
       
       // check if the file exists
