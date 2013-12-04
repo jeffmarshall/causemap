@@ -88,4 +88,6 @@ module.exports = function syncChanges(){
       feed.follow();
     }
   );
+
+  return feed;
 }
