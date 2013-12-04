@@ -11,6 +11,13 @@ var es_configs = config.get('elasticsearch');
 var db_uri = [db_configs.host, '/', db_configs.database].join('');
 var index_settings = settings(es_configs.indexes.main);
 
+
+// This feed may emit some things:
+// - error: the error and the input.
+// - updated: the document that was handled.
+// - deleted: the document that was deleted.
+// - message: some kind of message.
+
 var feed = new follow.Feed({
   db: db_uri,
   include_docs: true,
@@ -52,7 +59,7 @@ feed.on('change', function(change){
       change.seq, 
       function(settings_error){
         if(settings_error){
-          return console.error('settings error:', settings_error)
+          return feed.emit('error', settings_error);
         }
 
         self.resume();
@@ -63,16 +70,16 @@ feed.on('change', function(change){
   self.pause();
 
   get_bulk_ops(doc, function(ops_error, bulk_ops){
-    if(ops_error){ return console.error('ops error:', ops_error) }
+    if(ops_error) return feed.emit('error', ops_error, doc);
+
     if(!bulk_ops.length){
-      console.log('nothing to do:', change.id, change.seq);
       return updateLastUpdateSettingAndContinue();
     }
 
     return es().bulk(bulk_ops, function(bulk_error, bulk_result){
-      if (bulk_error){ return console.error('bulk error:', bulk_error, bulk_ops) }
-      if (doc._deleted) console.log('deleted:', doc._id);
-      else console.log('updated:', doc.type, doc._id);
+      if (bulk_error) return feed.emit('error', bulk_error, bulk_ops);
+      if (doc._deleted) feed.emit('deleted', doc);
+      else feed.emit('updated', doc);
       return updateLastUpdateSettingAndContinue();
     });
   });
@@ -84,7 +91,7 @@ module.exports = function syncChanges(){
     'last_update_seq', 
     function(settings_error, last_update_seq){
       feed.since = last_update_seq || 0;
-      console.log('last_update_seq:', feed.since);
+      feed.emit('message', 'last_update_seq: '+ feed.since);
       feed.follow();
     }
   );
