@@ -18,7 +18,6 @@ module.exports = function updateOperationsForChange(
   callback
 ){
   var change = doc;
-  console.log('doc:', change);
 
   var update_ops = [{
     index: {

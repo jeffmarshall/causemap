@@ -20,10 +20,7 @@ module.exports = function updateOperationsForAdjustment(
   callback
 ){
   var adjustment = doc;
-  console.log('doc:', adjustment);
-
   var update_ops = [];
-
   var adjusted = adjustment.adjusted;
 
   if(adjusted.doc.type == 'relationship' && adjusted.field.name == 'strength'){
