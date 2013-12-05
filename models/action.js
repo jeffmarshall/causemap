@@ -42,6 +42,9 @@ Action.prototype.validate = function validateAction(callback){
     return callback(validation_error, null);
   }
 
+  // TODO: when the verb is 'created', there should be some verification that
+  // there isn't already an action that 'created' the same subject.
+
   var user = new Doc(self.tmp.doc_body.user._id);
   var subject = new Doc(self.tmp.doc_body.subject._id);
 

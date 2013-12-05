@@ -9,6 +9,9 @@ module.exports = {
   language: 'javascript',
   validate_doc_update: function(new_doc, old_doc, user_context){
 
+    // TODO: validation of the 'verb' field should check for a list of allowed
+    // phrases: 'created', 'updated', etc.
+
     function required(be_true, message){
       if (!be_true) throw { forbidden: message };
     }
