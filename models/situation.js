@@ -208,22 +208,67 @@ Situation.prototype.popularity = function scoreSituationPopularity(callback){
 }
 
 
+Situation.prototype.actions = function situationActions(callback){
+  var self = this;
+
+  var view_options = {
+    include_docs: true,
+    startkey: [ self.id ],
+    endkey: [ self.id, {} ],
+    reduce: false
+  }
+
+  db().view(
+    'actions',
+    'by_subject',
+    view_options,
+    function(view_error, view_result){
+      if (view_error) return callback(view_error, null);
+      return callback(null, view_result.rows.map(
+        function(row){ return row.doc }
+      ))
+    }
+  )
+}
+
 
 Situation.prototype.delete = function deleteSituation(callback){
   var self = this;
 
-  // delete bookmarks
-  self.bookmarks(function(error, result){
-    if (error) return callback(error, null);
+  async.parallel([
+    function(parallel_callback){
+      // delete bookmarks
+      self.bookmarks(function(error, result){
+        if (error) return parallel_callback(error, null);
 
-    db().bulk({ docs: result.map(function(doc){
-      doc._deleted = true;
-      return doc;
-    }) }, function(bulk_error, bulk_delete){
-      if (bulk_error) return callback(bulk_error, null);
-      Situation.super_.prototype.delete.call(self, callback);
-    })
-  })
+        db().bulk({ docs: result.map(function(doc){
+          doc._deleted = true;
+          return doc;
+        }) }, function(bulk_error, bulk_delete){
+          if (bulk_error) return parallel_callback(bulk_error, null);
+          return parallel_callback(null, { bookmarks_deleted: true });
+        })
+      })
+    },
+    
+    function(parallel_callback){
+      // delete actions
+      self.actions(function(error, actions){
+        if (error) return parallel_callback(error, null);
+        
+        db().bulk({ docs: actions.map(function(doc){
+          doc._deleted = true;
+          return doc;
+        }) }, function(bulk_error, bulk_result){
+          if (bulk_error) return parallel_callback(bulk_error, null);
+          return parallel_callback(null, { actions_deleted: true });
+        })
+      });
+    }
+  ], function(parallel_error, parallel_result){
+    if (parallel_error) return callback(parallel_error, null);
+    return Situation.super_.prototype.delete.call(self, callback);
+  });
 }
 
 
