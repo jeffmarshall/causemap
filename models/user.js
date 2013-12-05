@@ -187,6 +187,30 @@ User.prototype.adjustments = function userAdjustments(callback){
 }
 
 
+User.prototype.actions = function userActions(callback){
+  var self = this;
+
+  var view_options = {
+    include_docs: true,
+    startkey: [ self.id ],
+    endkey: [ self.id, {} ],
+    reduce: false
+  }
+
+  db().view(
+    'actions',
+    'by_user_verb_and_doc',
+    view_options,
+    function(view_error, view_result){
+      if (view_error) return callback(view_error, null);
+      return callback(null, view_result.rows.map(
+        function(row){ return row.doc }
+      ))
+    }
+  )
+}
+
+
 User.prototype.delete = function deleteUser(callback){
   var self = this;
 
@@ -211,6 +235,17 @@ User.prototype.delete = function deleteUser(callback){
         if (error) return parallel_callback(error, null);
         
         db().bulk({ docs: adjustments.map(function(doc){
+          doc._deleted = true;
+          return doc;
+        }) }, parallel_callback)
+      });
+    },
+    function(parallel_callback){
+      // delete actions
+      self.actions(function(error, actions){
+        if (error) return parallel_callback(error, null);
+        
+        db().bulk({ docs: actions.map(function(doc){
           doc._deleted = true;
           return doc;
         }) }, parallel_callback)
