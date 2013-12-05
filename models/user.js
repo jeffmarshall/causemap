@@ -229,6 +229,7 @@ User.prototype.delete = function deleteUser(callback){
         })
       })
     },
+
     function(parallel_callback){
       // delete adjustments
       self.adjustments(function(error, adjustments){
@@ -240,6 +241,7 @@ User.prototype.delete = function deleteUser(callback){
         }) }, parallel_callback)
       });
     },
+    
     function(parallel_callback){
       // delete actions
       self.actions(function(error, actions){
