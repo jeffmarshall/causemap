@@ -8,7 +8,6 @@ module.exports = _.extend(
   cartography.models,
   auth.models,
   {
-    Bookmark: require('./bookmark'),
     User: require('./user'),
     Relationship: require('./relationship'),
     Situation: require('./situation')
