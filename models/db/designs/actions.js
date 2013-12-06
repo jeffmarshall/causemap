@@ -71,14 +71,14 @@ module.exports = {
           emit([
             doc.user._id,
             doc.verb,
-            doc.doc._id,
+            doc.subject._id,
             doc.creation_date
           ], null);
         }
       },
       reduce: function(keys, values, rereduce){
         if (rereduce){ return sum(values) }
-        return sum(values);
+        return keys.length;
       }
     }
   }
