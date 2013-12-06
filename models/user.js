@@ -240,18 +240,6 @@ User.prototype.delete = function deleteUser(callback){
           return doc;
         }) }, parallel_callback)
       });
-    },
-    
-    function(parallel_callback){
-      // delete actions
-      self.actions(function(error, actions){
-        if (error) return parallel_callback(error, null);
-        
-        db().bulk({ docs: actions.map(function(doc){
-          doc._deleted = true;
-          return doc;
-        }) }, parallel_callback)
-      });
     }
   ], function(parallel_error, parallel_result){
     if (parallel_error) return callback(parallel_error, null);
