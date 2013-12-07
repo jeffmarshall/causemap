@@ -264,6 +264,36 @@ Situation.prototype.delete = function deleteSituation(callback){
           return parallel_callback(null, { actions_deleted: true });
         })
       });
+    },
+
+    function(parallel_callback){
+      // delete actions for changes
+      // TODO: find some way to do this for a change when it's deleted or
+      // something.
+
+      self.changes(function(error, changes){
+        if (error) return parallel_callback(error, null);
+
+        var action_ids = changes.map(function(change){
+          return ['created', change._id].join(':');
+        })
+
+        db().fetch({ keys: action_ids }, function(error, view_result){
+          if (error) return parallel_callback(error, null);
+          var docs = view_result.rows.map(function(row){
+            row.doc._deleted = true;
+            return row.doc;
+          });
+
+          db().bulk({ docs: docs }, function(error, bulk_result){
+            if (error) return parallel_callback(error, null);
+            return parallel_callback(
+              null,
+              { actions_for_changes_deleted: true}
+            );
+          })
+        });
+      })
     }
   ], function(parallel_error, parallel_result){
     if (parallel_error) return callback(parallel_error, null);
