@@ -2,12 +2,12 @@ var util = require('util');
 var async = require('async');
 var auth = require('auth');
 
-var Situation = require('./situation');
-var Bookmark = require('./bookmark');
-var Adjustment = require('./adjustment');
-var Action = require('./action');
+var Situation = require('../situation');
+var Bookmark = require('../bookmark');
+var Adjustment = require('../adjustment');
+var Action = require('../action');
 
-var db = require('./db').db;
+var db = require('../db').db;
 
 
 
