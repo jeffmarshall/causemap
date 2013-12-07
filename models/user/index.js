@@ -1,7 +1,10 @@
 var util = require('util');
 var async = require('async');
 var auth = require('auth');
+var cartography = require('cartography');
 
+var Change = cartography.models.Change;
+var Action = require('../action');
 var Bookmark = require('../bookmark');
 var Adjustment = require('../adjustment');
 
@@ -20,6 +23,38 @@ var User = function User(id){
 
 
 util.inherits(User, auth.models.User);
+
+
+
+User.prototype._change = function(key, model_instance, value, callback){
+  var self = this;
+
+  model_instance[key](value, function(error, model_instance_result){
+    if (error) return callback(error, null);
+
+    var new_action = new Action([
+      'created', 
+      model_instance_result.id
+    ].join(':'))
+
+    new_action.create({
+      user: { _id: self.id },
+      verb: 'created',
+      subject: {
+        _id: model_instance.id,
+        type: model_instance.type
+      }
+    }, function(error, action_result){
+      if (error){
+        var change = new Change(model_instance_result.id);
+        change.delete(function(){});
+        return callback(error, null);
+      }
+
+      return callback(null, model_instance_result)
+    })
+  })
+}
 
 
 
