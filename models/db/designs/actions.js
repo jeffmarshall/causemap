@@ -80,6 +80,14 @@ module.exports = {
         if (rereduce){ return sum(values) }
         return keys.length;
       }
+    },
+
+    by_subject: {
+      map: function(doc){
+        if (doc.type == 'action'){
+          emit([ doc.subject._id ], null)
+        }
+      }
     }
   }
 }
