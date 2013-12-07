@@ -51,7 +51,7 @@ Action.prototype.validate = function validateAction(callback){
   async.parallel([
     function(parallel_callback){
       user.exists(function(error, exists){
-        if (error) return parallel_error(error, null);
+        if (error) return parallel_callback(error, null);
         return parallel_callback(null, { user_exists: true });
       });
     },
