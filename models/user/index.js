@@ -1,5 +1,6 @@
 var util = require('util');
 var async = require('async');
+var _ = require('lodash');
 var auth = require('auth');
 var cartography = require('cartography');
 
@@ -54,6 +55,63 @@ User.prototype._change = function(model_instance, key, value, callback){
       return callback(null, model_instance_result)
     })
   })
+}
+
+
+
+User.prototype.with = function userWithInstance(instance){
+  if (!instance.revisable) return instance;
+
+  var user = this;
+  var instance_clone = new instance.constructor(instance.id);
+  
+  function wrapActionableMethod(method_name){
+    var method = instance[method_name];
+
+    instance_clone[method_name] = function(){
+      var callback = _.clone(arguments[arguments.length -1]);
+
+      function newCallback(error, result){
+        if (error) return callback(error, null);
+
+        var new_action = new Action([
+          'created',
+          result.id
+        ].join(':'));
+
+        new_action.create({
+          user: { _id: user.id },
+          verb: 'created',
+          subject: {
+            _id: result.id,
+            type: 'change'
+          }
+        }, function(creation_error, creation_result){
+          if (creation_error){
+            callback(creation_error, null);
+            var change = new Change(result.id);
+            return change.delete(function(){});
+          }
+
+          return callback(null, result);
+        })
+      }
+
+      arguments[arguments.length -1] = newCallback;
+
+      method.apply(instance, arguments);
+    }
+  }
+
+  [
+    '_set',
+    '_unset',
+    '_change',
+    '_add',
+    '_remove'
+  ].forEach(wrapActionableMethod);
+
+  return instance_clone;
 }
 
 
