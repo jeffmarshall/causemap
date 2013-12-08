@@ -26,7 +26,7 @@ util.inherits(User, auth.models.User);
 
 
 
-User.prototype._change = function(key, model_instance, value, callback){
+User.prototype._change = function(model_instance, key, value, callback){
   var self = this;
 
   model_instance[key](value, function(error, model_instance_result){
