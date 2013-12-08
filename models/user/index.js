@@ -41,8 +41,8 @@ User.prototype._change = function(model_instance, key, value, callback){
       user: { _id: self.id },
       verb: 'created',
       subject: {
-        _id: model_instance.id,
-        type: model_instance.type
+        _id: model_instance_result.id,
+        type: 'change'
       }
     }, function(error, action_result){
       if (error){
