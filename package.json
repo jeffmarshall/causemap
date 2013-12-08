@@ -9,7 +9,7 @@
     "async": "~0.2.9",
     "lodash": "~2.2.1",
     "nano": "~4.1.4",
-    "cartography": "git://github.com/classy/cartography.git#3bd6c4f37c3e1cab09765a3ea2dd52e57a848bd7",
+    "cartography": "git://github.com/classy/cartography.git#395c6d889f7d07f41f53f60fbcb491adbdc5f5c7",
     "auth": "git://github.com/classy/auth.git#1be6d0c75598d81bdcf3a4eb07966d7adaec0ac0"
   },
   "devDependencies": {},
