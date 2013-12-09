@@ -27,45 +27,13 @@ util.inherits(User, auth.models.User);
 
 
 
-User.prototype._change = function(model_instance, key, value, callback){
-  var self = this;
-
-  model_instance[key](value, function(error, model_instance_result){
-    if (error) return callback(error, null);
-
-    var new_action = new Action([
-      'created', 
-      model_instance_result.id
-    ].join(':'))
-
-    new_action.create({
-      user: { _id: self.id },
-      verb: 'created',
-      subject: {
-        _id: model_instance_result.id,
-        type: 'change'
-      }
-    }, function(error, action_result){
-      if (error){
-        var change = new Change(model_instance_result.id);
-        change.delete(function(){});
-        return callback(error, null);
-      }
-
-      return callback(null, model_instance_result)
-    })
-  })
-}
-
-
-
 User.prototype.with = function userWithInstance(instance){
   if (!instance.revisable) return instance;
 
   var user = this;
   var instance_clone = new instance.constructor(instance.id);
   
-  function wrapActionableMethod(method_name){
+  function wrapActionableMethod(result_type, method_name){
     var method = instance[method_name];
 
     instance_clone[method_name] = function(){
@@ -84,7 +52,7 @@ User.prototype.with = function userWithInstance(instance){
           verb: 'created',
           subject: {
             _id: result.id,
-            type: 'change'
+            type: result_type
           }
         }, function(creation_error, creation_result){
           if (creation_error){
@@ -109,7 +77,13 @@ User.prototype.with = function userWithInstance(instance){
     '_change',
     '_add',
     '_remove'
-  ].forEach(wrapActionableMethod);
+  ].forEach(_.curry(wrapActionableMethod)('change'));
+
+  if (instance.type == 'situation'){
+    ['because', 'caused'].forEach(
+      _.curry(wrapActionableMethod)('relationship')
+    )
+  }
 
   return instance_clone;
 }
