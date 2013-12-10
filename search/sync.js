@@ -24,7 +24,13 @@ var feed = new follow.Feed({
   filter: function(doc, req){
     if (
       doc._deleted || 
-      ['situation', 'relationship', 'change', 'adjustment'].indexOf(
+      [
+        'situation',
+        'relationship',
+        'change',
+        'adjustment',
+        'bookmark'
+      ].indexOf(
         doc.type
       ) > -1
     ){
@@ -46,6 +52,7 @@ feed.on('change', function(change){
     get_bulk_ops = update.deleted;
   } else {
     switch(doc.type){
+      case 'bookmark': get_bulk_ops = update.bookmark; break; 
       case 'adjustment': get_bulk_ops = update.adjustment; break; 
       case 'change': get_bulk_ops = update.change; break; 
       case 'situation': get_bulk_ops = update.situation; break; 

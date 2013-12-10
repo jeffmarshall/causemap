@@ -3,5 +3,6 @@ module.exports = {
   adjustment: require('./adjustment'),
   change: require('./change'),
   relationship: require('./relationship'),
-  situation: require('./situation')
+  situation: require('./situation'),
+  bookmark: require('./bookmark')
 };

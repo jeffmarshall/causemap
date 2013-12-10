@@ -3,13 +3,16 @@ var _ = require('lodash');
 var Doc = require('../../models/doc');
 var es = require('../client');
 var updateOperationsForRelationship = require('./relationship');
+var updateOperationsForSituation = require('./situation');
 
 
 
 module.exports = function deleteDeletedDoc(deleted_doc, callback){
   var update_ops = [];
 
-  if (deleted_doc._id.split(':').indexOf('adjusted') > -1){
+  var split_id = deleted_doc._id.split(':');
+
+  if (split_id.indexOf('adjusted') > -1){
     var adjusted = { doc: {}, field: {} };
     adjusted.doc._id = deleted_doc._id.split(':')[2];
     adjusted.field.name = deleted_doc._id.split(':')[3];
@@ -31,6 +34,24 @@ module.exports = function deleteDeletedDoc(deleted_doc, callback){
         );
       }
     });
+  }
+
+  if (split_id.indexOf('bookmarked') > -1){
+    var bookmarked_doc = new Doc(split_id[2]);
+
+    return bookmarked_doc.read(function(read_error, bookmarked_doc_body){
+      if (read_error) return callback(read_error, null);
+      if (bookmarked_doc_body.type == 'situation'){
+        return updateOperationsForSituation(
+          bookmarked_doc_body,
+          function(ops_error, operations){
+            if (ops_error){ return callback(ops_error, null) }
+            update_ops.push(operations);
+            return callback(null, _.flatten(update_ops));
+          }
+        )
+      }
+    })
   }
 
   es().search({
