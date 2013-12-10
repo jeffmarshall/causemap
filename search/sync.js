@@ -111,4 +111,12 @@ feed.initialize = function(callback){
 }
 
 
+/* emits the following:
+ *
+ * - error
+ * - deleted
+ * - updated
+ * - initialized
+ * - message
+ */
 module.exports = feed;
