@@ -40,24 +40,11 @@ Situation.prototype.controversiality = function scoreSituationControversiality(
     },
 
     function(parallel_callback){
-      var view_options = {
-        startkey: [ self.id ],
-        endkey: [ self.id, {} ]
-      }
-
-      db().view(
-        'cm-changes',
-        'by_changed',
-        view_options,
-        function(view_error, view_results){
-          if (view_error) return parallel_error(view_error, null);
-          if (view_results.rows.length){
-            total_changes = view_results.rows[0].value;
-          }
-
-          return parallel_callback(null, { read_changes: true });
-        }
-      );
+      self.totalChanges(function(error, total_changes){
+        if (error) return parallel_callback(error, null);
+        total_changes = total_changes;
+        return parallel_callback(null, { read_changes: true });
+      })
     }
   ], function(parallel_error, parallel_result){
     if (parallel_error) return callback(parallel_error, null);
@@ -160,24 +147,11 @@ Situation.prototype.popularity = function scoreSituationPopularity(callback){
     },
 
     function(parallel_callback){
-      var view_options = {
-        startkey: [ self.id ],
-        endkey: [ self.id, {} ]
-      }
-
-      db().view(
-        'cm-changes', 
-        'by_changed', 
-        view_options, 
-        function(view_error, view_results){
-          if (view_error) return parallel_callback(view_error, null);
-          if (view_results.rows.length){
-            total_changes = view_results.rows[0].value;
-          }
-
-          return parallel_callback(null, { read_changes: true });
-        }
-      );
+      self.totalChanges(function(error, total_changes){
+        if (error) return parallel_callback(error, null);
+        total_changes = total_changes;
+        return parallel_callback(null, { read_changes: true });
+      })
     }
   ], function(parallel_error, parallel_result){
     /* 
