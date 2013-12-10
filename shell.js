@@ -2,9 +2,10 @@
 
 var _ = require('lodash');
 var repl = require("repl");
-var context = repl.start("$ ").context;
+var context = repl.start("> ").context;
 
 cm = require('./');
 
 context = _.extend(context, cm.models);
 context.cm = cm;
+context.util = require('util');
