@@ -86,15 +86,21 @@ feed.on('change', function(change){
 });
 
 
-module.exports = function syncChanges(){
+feed.initialize = function(callback){
   index_settings.get(
     'last_update_seq', 
     function(settings_error, last_update_seq){
+      if (settings_error) return callback(settings_error, null);
+
       feed.since = last_update_seq || 0;
       feed.emit('message', 'last_update_seq: '+ feed.since);
-      feed.emit('ready');
-    }
-  );
+      feed.initialized = true;
+      feed.emit('initialized');
 
-  return feed;
+      return callback(null, { last_update: last_update_seq })
+    }
+  )
 }
+
+
+module.exports = feed;
