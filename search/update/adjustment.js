@@ -1,19 +1,8 @@
 var _ = require('lodash');
-var async = require('async');
-var config = require('../../config');
-var models = require('../../models');
 
-var Adjustment = models.Adjustment;
-var Situation = models.Situation;
-
-var updateOperationsForSituation = require('./situation');
 var updateOperationsForRelationship = require('./relationship');
 
 
-
-var es_config = config.get('elasticsearch');
-var main_index_name = es_config.indexes.main;
-var suggestion_index_name = es_config.indexes.suggestions;
 
 module.exports = function updateOperationsForAdjustment(
   doc,
