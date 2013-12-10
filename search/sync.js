@@ -92,7 +92,7 @@ module.exports = function syncChanges(){
     function(settings_error, last_update_seq){
       feed.since = last_update_seq || 0;
       feed.emit('message', 'last_update_seq: '+ feed.since);
-      feed.follow();
+      feed.emit('ready');
     }
   );
 
