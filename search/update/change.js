@@ -10,7 +10,7 @@ var updateOperationsForRelationship = require('./relationship');
 
 
 var es_config = config.get('elasticsearch');
-var main_index_name = es_config.indexes.main;
+var change_index_name = es_config.indexes.changes;
 var suggestion_index_name = es_config.indexes.suggestions;
 
 module.exports = function updateOperationsForChange(
@@ -21,7 +21,7 @@ module.exports = function updateOperationsForChange(
 
   var update_ops = [{
     index: {
-      index: main_index_name,
+      index: change_index_name,
       type: doc.type,
       id: doc._id,
       data: change

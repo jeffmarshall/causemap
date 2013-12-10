@@ -6,8 +6,8 @@ var Situation = require('cartography').models.Situation;
 
 
 var es_config = config.get('elasticsearch');
-var main_index_name = es_config.indexes.main;
-var suggestion_index_name = es_config.indexes.suggestion;
+var situation_index_name = es_config.indexes.situations;
+var suggestion_index_name = es_config.indexes.suggestions;
 
 module.exports = function updateOperationsForSituation(
   doc,
@@ -66,7 +66,7 @@ module.exports = function updateOperationsForSituation(
     var update_ops = [
       {
         index: {
-          index: main_index_name,
+          index: situation_index_name,
           type: doc.type,
           id: doc._id,
           data: body

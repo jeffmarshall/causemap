@@ -6,8 +6,7 @@ var Relationship = require('cartography').models.Relationship;
 
 
 var es_config = config.get('elasticsearch');
-var main_index_name = es_config.indexes.main;
-var suggestion_index_name = es_config.indexes.suggestion;
+var relationship_index_name = es_config.indexes.relationships;
 
 module.exports = function updateOperationsForRelationship(
   doc,
@@ -59,7 +58,7 @@ module.exports = function updateOperationsForRelationship(
     return callback(null, [
       {
         index: {
-          index: main_index_name,
+          index: relationship_index_name,
           type: doc.type,
           id: doc._id,
           data: summary

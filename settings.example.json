@@ -9,8 +9,10 @@
       "port": 9200
     },
     "indexes": {
-      "main": "causemap",
-      "suggestion": "causemap_suggestions"
+      "situations": "situations",
+      "suggestions": "suggestions",
+      "relationships": "relationships",
+      "changes": "changes"
     }
   },
   // Determines how quickly popularity scores will deteriorate.
