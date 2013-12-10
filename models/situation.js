@@ -139,7 +139,8 @@ Situation.prototype.popularity = function scoreSituationPopularity(callback){
     function(parallel_callback){
       var view_options = {
         startkey: [ self.id ],
-        endkey: [ self.id, {} ]
+        endkey: [ self.id, {} ],
+        group_level: 1
       }
 
       db().view(
@@ -149,7 +150,7 @@ Situation.prototype.popularity = function scoreSituationPopularity(callback){
         function(view_error, view_results){
           if (view_error) return parallel_callback(view_error, null);
 
-          if (view_results.length){
+          if (view_results.rows.length){
             total_bookmarks = view_results.rows[0].value;
           }
 
