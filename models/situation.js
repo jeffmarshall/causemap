@@ -40,9 +40,9 @@ Situation.prototype.controversiality = function scoreSituationControversiality(
     },
 
     function(parallel_callback){
-      self.totalChanges(function(error, total_changes){
+      self.totalChanges(function(error, result){
         if (error) return parallel_callback(error, null);
-        total_changes = total_changes;
+        total_changes = result;
         return parallel_callback(null, { read_changes: true });
       })
     }
