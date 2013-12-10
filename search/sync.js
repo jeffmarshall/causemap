@@ -94,6 +94,7 @@ feed.on('change', function(change){
 
 
 feed.initialize = function(callback){
+  var callback = callback || function(){};
   index_settings.get(
     'last_update_seq', 
     function(settings_error, last_update_seq){
