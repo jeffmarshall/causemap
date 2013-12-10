@@ -9,7 +9,7 @@ var es = require('./client');
 var db_configs = config.get('couchdb');
 var es_configs = config.get('elasticsearch');
 var db_uri = [db_configs.host, '/', db_configs.database].join('');
-var index_settings = settings(es_configs.indexes.main);
+var index_settings = settings('settings');
 
 
 // This feed may emit some things:
