@@ -19,6 +19,7 @@ var Situation = function Situation(id){
 }
 
 util.inherits(Situation, cartography.models.Situation);
+Situation.identify = cartography.models.Situation.identify;
 
 
 
