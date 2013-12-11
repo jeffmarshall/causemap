@@ -11,6 +11,16 @@ module.exports = (function(){
     var configs = {};
   }
 
+  function configureDependencies(){
+    cartography.config.set('couchdb', configs.couchdb);
+    cartography.config.set('couchdb_testing', configs.couchdb_testing);
+    auth.config.set(configs.auth);
+    auth.config.set('couchdb', configs.couchdb);
+    auth.config.set('couchdb_testing', configs.couchdb_testing);
+  }
+  
+  configureDependencies();
+
   return {
     set: function(){
       switch(arguments.length){
@@ -18,8 +28,7 @@ module.exports = (function(){
         case 2: configs[arguments[0]] = arguments[1]; break;
       }
 
-      cartography.config.set('couchdb', configs.couchdb);
-      auth.config.set('couchdb', configs.couchdb);
+      configureDependencies();
       return;
     },
     get: function(key){

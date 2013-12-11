@@ -1,20 +1,35 @@
 {
   "couchdb": {
     "host": "http://localhost:5984",
-    "database": "causemap"
+    "database": "causemap_dev"
   },
+
+  "couchdb_testing": {
+    "host": "http://localhost:5984",
+    "database": "causemap_testing"
+  },
+
   "elasticsearch": {
     "host": "localhost",
     "options": {
       "port": 9200
     },
+
     "indexes": {
-      "situations": "situations",
-      "suggestions": "suggestions",
-      "relationships": "relationships",
-      "changes": "changes"
+      "situations": "situations_dev",
+      "suggestions": "suggestions_dev",
+      "relationships": "relationships_dev",
+      "changes": "changes_dev"
     }
   },
+
+  "auth":{
+    "password_algo": "pbkdf2",
+    "password_iter": 5000,
+    "password_salt_length": 16,
+    "password_key_length": 16,
+  },
+
   // Determines how quickly popularity scores will deteriorate.
   "popularity_gravity": 1.8,
 
