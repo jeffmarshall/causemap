@@ -5,14 +5,14 @@ var Situation = require('cartography').models.Situation;
 
 
 
-var es_config = config.get('elasticsearch');
-var situation_index_name = es_config.indexes.situations;
-var suggestion_index_name = es_config.indexes.suggestions;
-
 module.exports = function updateOperationsForSituation(
   doc,
   callback
 ){
+  var es_config = config.get('elasticsearch');
+  var situation_index_name = es_config.indexes.situations;
+  var suggestion_index_name = es_config.indexes.suggestions;
+
   var situation = new Situation(doc._id);
   var summary;
   var body;

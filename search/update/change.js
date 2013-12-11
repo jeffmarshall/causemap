@@ -9,14 +9,14 @@ var updateOperationsForRelationship = require('./relationship');
 
 
 
-var es_config = config.get('elasticsearch');
-var change_index_name = es_config.indexes.changes;
-var suggestion_index_name = es_config.indexes.suggestions;
-
 module.exports = function updateOperationsForChange(
   doc,
   callback
 ){
+  var es_config = config.get('elasticsearch');
+  var change_index_name = es_config.indexes.changes;
+  var suggestion_index_name = es_config.indexes.suggestions;
+
   var change = doc;
 
   var update_ops = [{

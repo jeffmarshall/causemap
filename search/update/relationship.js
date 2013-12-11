@@ -5,13 +5,13 @@ var Relationship = require('cartography').models.Relationship;
 
 
 
-var es_config = config.get('elasticsearch');
-var relationship_index_name = es_config.indexes.relationships;
-
 module.exports = function updateOperationsForRelationship(
   doc,
   callback
 ){
+  var es_config = config.get('elasticsearch');
+  var relationship_index_name = es_config.indexes.relationships;
+  
   var relationship = new Relationship(doc._id);
 
   async.parallel([
