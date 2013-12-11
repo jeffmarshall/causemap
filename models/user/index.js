@@ -24,6 +24,8 @@ var User = function User(id){
 
 
 util.inherits(User, auth.models.User);
+User.identify = auth.models.User.identify;
+User.createPassword = auth.models.User.createPassword;
 
 
 
