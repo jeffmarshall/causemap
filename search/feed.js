@@ -98,8 +98,6 @@ function initializedFeed(callback){
   index_settings.get(
     'last_update_seq', 
     function(settings_error, last_update_seq){
-      if (settings_error) return callback(settings_error, null);
-
       feed.since = last_update_seq || 0;
 
       return callback(null, feed)
